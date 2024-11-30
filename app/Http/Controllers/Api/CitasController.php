@@ -1,0 +1,290 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Cita;
+use App\Models\Solicitante;
+use App\Models\Estacion;
+use App\Models\Vehiculo;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CitasMail;
+
+class CitasController extends Controller
+{
+    public function index()
+    {
+        $citas = Cita::with('solicitante', 'estacion', 'estacion.direccion', 'vehiculo')->get();
+
+        if ($citas->isEmpty()) {
+            $data = [
+                'message' => 'No hay citas registradas',
+                'status' => 200,
+            ];
+            return response()->json($data, 200);
+        }
+        $data = [
+            'citas' => $citas,
+            'status' => 200,
+        ];
+        return response()->json($data, 200);
+    }
+
+    public function store(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'curp' => 'required',
+            'nombre' => 'required',
+            'apellido_p' => 'required',
+            'apellido_m' => 'required',
+            'celular' => 'required|size:10',
+            'correo' => 'required|email',
+            'regimen' => 'required',
+            'placa' => 'required',
+            'vin' => 'required',
+            'modelo' => 'required',
+            'marca' => 'required',
+            'año' => 'required',
+            'estado' => 'required',
+            'tipo_combustible' => 'required',
+            'tipo_cita' => 'required',
+            'fecha' => 'required|date_format:Y-m-d',
+            'hora' => 'required|date_format:H:i',
+            'id_estacion' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $data = [
+                'message' => 'Error en la validacion de los datos',
+                'errors' => $validator->errors(),
+                'status' => 400,
+            ];
+            return response()->json($data, 400);
+        }
+
+        $solicitante = Solicitante::find($request->curp);
+        $vehiculo = Vehiculo::find($request->placa);
+        $estacion = Estacion::find($request->id_estacion);
+/*
+        //Primer caso es nuevo el registro es decir su primera vez
+        if (!$solicitante && !$vehiculo) {
+
+            $solicitante = Solicitante::create([
+                'curp' => $request->curp,
+                'nombre' => $request->nombre,
+                'apellido_p' => $request->apellido_p,
+                'apellido_m' => $request->apellido_m,
+                'celular' => $request->celular,
+                'correo' => $request->correo,
+                'regimen' => $request->regimen,
+            ]);
+
+            $vehiculo = Vehiculo::create([
+                'placa' => $request->placa,
+                'vin' => $request->vin,
+                'modelo' => $request->modelo,
+                'marca' => $request->marca,
+                'año' => $request->año,
+                'estado' => $request->estado,
+                'tipo_combustible' => $request->tipo_combustible,
+                'id_solicitante' => $solicitante->curp,
+            ]);
+
+            $cita = Cita::create([
+                'folio' => $folio = $estacion->nombre . '-' . $request->fecha . '-' . uniqid(),
+                'estado' => false,
+                'hora' => $request->hora,
+                'fecha' => $request->fecha,
+                'tipo' => $request->tipo_cita,
+                'id_solicitante' => $solicitante->curp,
+                'id_estacion' => $estacion->id,
+                'id_vehiculo' => $vehiculo->placa
+
+            ]);
+            $cita->solicitante;
+            $cita->estacion->direccion;
+
+            $data = [
+                'cita' => $cita,
+                'status' => 201,
+            ];
+
+            return response()->json($data, 201);
+        }
+
+        */
+
+        // Verificar que el vehículo pertenece al solicitante
+        $vehiculo_pertenece_solicitante = Vehiculo::where('placa', $vehiculo->placa)
+            ->where('id_solicitante', $solicitante->curp)
+            ->first();
+
+        if (!$vehiculo_pertenece_solicitante) {
+            return response()->json([
+                'message' => 'El vehículo no pertenece al solicitante.',
+                'status' => 400
+            ], 400);
+        }
+
+
+        $cita_repetida = Cita::where('id_solicitante', $solicitante->curp)
+            ->where('id_vehiculo', $vehiculo_pertenece_solicitante->placa)
+            ->where('estado', false)
+            ->where('fecha', $request->fecha)
+            ->where('hora', $request->hora)
+            ->first();
+
+        if ($cita_repetida) {
+            return response()->json([
+                'message' => 'Cita ya registrada.',
+                'status' => 400
+            ], 400);
+        }
+
+        if (Cita::where('fecha', $request->fecha)->where('hora', $request->hora)->where('estado', false)->first()) {
+            return response()->json([
+                'message' => 'Cita con hora y fecha ya registrada.',
+                'status' => 400
+            ], 400);
+        }
+
+        $cita = Cita::create([
+            'folio' => $folio = $estacion->nombre . '-' . $request->fecha . '-' . uniqid(),
+            'id_solicitante' => $solicitante->curp,
+            'id_estacion' => $estacion->id,
+            'id_vehiculo' => $vehiculo->placa,
+            'fecha' => $request->fecha,
+            'hora' => $request->hora,
+            'tipo' => $request->tipo_cita,
+            'estado' => false,
+        ]);
+
+        $data = [
+            'cita' => $cita,
+            'status' => 201,
+        ];
+        $cita->vehiculo;
+        $cita->solicitante;
+        $cita->estacion;
+        Mail::to($request->correo)->send(new CitasMail());
+
+        return response()->json($data, 201);
+    }
+
+    public function show(Request $request)
+    {
+        // Validar la entrada del usuario
+        $validator = Validator::make($request->all(), [
+            'placa' => 'nullable|string',
+            'folio' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Error en la validación de los datos',
+                'errors' => $validator->errors(),
+                'status' => 400,
+            ], 400);
+        }
+
+        $query = Cita::query();
+
+        if ($request->has('placa') || $request->has('folio')) {
+            $query->where('id_vehiculo', $request->placa)
+                ->orWhere('folio', $request->folio);
+        }
+
+        $citas = $query->with(['vehiculo', 'solicitante', 'estacion'])
+            ->first();
+
+        return response()->json([
+            'cita' => $citas,
+            'status' => 200,
+        ]);
+    }
+
+
+
+
+    public function getHorasDisponibles($fecha, Request $request)
+    {
+        $centerId = $request->query('centerId'); // Get the center ID from the query string
+
+        $horaInicio = '08:00:00';
+        $horaFin = '18:00:00';
+
+        // Generate all time slots in 15-minute intervals
+        $todasLasHoras = $this->generarIntervalosDeTiempo($horaInicio, $horaFin, 15);
+
+        // Get booked hours for the given date and station
+        $horasOcupadas = Cita::where('fecha', $fecha)
+            ->where('id_estacion', $centerId) // Filter by station ID
+            ->pluck('hora')
+            ->toArray();
+
+        // Calculate available hours
+        $horasDisponibles = array_diff($todasLasHoras, $horasOcupadas);
+
+        // Format hours to H:i
+        $horas_formateadas = array_map(function ($hora) {
+            return date('H:i', strtotime($hora));
+        }, $horasDisponibles);
+
+        return response()->json([
+            'horas' => array_values($horas_formateadas),
+            'status' => 200,
+        ]);
+    }
+
+
+    private function generarIntervalosDeTiempo($inicio, $fin, $intervaloEnMinutos)
+    {
+        $horarios = [];
+        $horaActual = strtotime($inicio);
+        $horaLimite = strtotime($fin);
+
+        while ($horaActual <= $horaLimite) {
+            $horarios[] = date('H:i:s', $horaActual);
+            $horaActual = strtotime("+{$intervaloEnMinutos} minutes", $horaActual);
+        }
+
+        return $horarios;
+    }
+
+    public function filtrarCitas(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'estado' => 'nullable|boolean',
+            'id_estacion' => 'nullable',
+        ]);
+
+        if ($validator->fails()) {
+            $data = [
+                'message' => 'Error en la validacion de los datos',
+                'errors' => $validator->errors(),
+                'status' => 400,
+            ];
+            return response()->json($data, 400);
+        }
+        $query = Cita::query();
+
+        if ($request->has('id_estacion')) {
+            $query->where('id_estacion', $request->id_estacion);
+        }
+
+        if ($request->has('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        $citas = $query->with('vehiculo', 'solicitante', 'estacion')->get();
+
+        return response()->json([
+            'data' => $citas,
+            'status' => 200,
+        ]);
+    }
+}
