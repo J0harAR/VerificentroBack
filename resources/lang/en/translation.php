@@ -132,7 +132,8 @@ return [
     "Utility" => "Utility",
     "Placeholders"=>"Placeholders",
     "Toast"=>"Toasts",
-
+    "Users"=>"Usuarios",
+    "Role"=>"Roles",
 
 ];
 ?>
