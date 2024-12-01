@@ -219,6 +219,15 @@ class CitasController extends Controller
         // Generate all time slots in 15-minute intervals
         $todasLasHoras = $this->generarIntervalosDeTiempo($horaInicio, $horaFin, 15);
 
+        // Obtener la hora actual si la fecha es hoy
+        $horaActual = now()->format('H:i:s');
+        if ($fecha == now()->format('Y-m-d')) {
+            // Filtrar las horas después de la hora actual
+            $todasLasHoras = array_filter($todasLasHoras, function ($hora) use ($horaActual) {
+                return $hora > $horaActual;
+            });
+        }
+
         // Get booked hours for the given date and station
         $horasOcupadas = Cita::where('fecha', $fecha)
             ->where('id_estacion', $centerId) // Filter by station ID

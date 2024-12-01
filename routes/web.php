@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\CitasController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,6 +28,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RolController::class);
     //Usuarios
     Route::resource('usuarios', UsuarioController::class);
+
+    Route::get('/citas',[CitasController::class,'index'])->name('citas.index');
+    Route::put('/cita/{id}',[CitasController::class,'update'])->name('citas.update');
+    Route::delete('/cita/{id}',[CitasController::class,'destroy'])->name('citas.destroy');
+    Route::post('/cita/{id}/aviso',[CitasController::class,'sendMail'])->name('citas.aviso');
+    Route::put('/cita/{id}/finalizar',[CitasController::class,'changeStatus'])->name('citas.finalizar');
 });
 
 
