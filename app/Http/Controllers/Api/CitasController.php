@@ -199,6 +199,13 @@ class CitasController extends Controller
 
         $citas = $query->with(['vehiculo', 'solicitante', 'estacion'])
             ->first();
+        
+        if (!$citas) {
+                return response()->json([
+                    'message' => 'Cita no encontrada.',
+                    'status' => 400
+                ], 400);
+        }
 
         return response()->json([
             'cita' => $citas,
