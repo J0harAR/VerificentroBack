@@ -50,4 +50,5 @@ Route::get('/citas',[CitasController::class,'index']);
 Route::get('/citas/buscar',[CitasController::class,'filtrarCitas']);
 Route::post('/cita',[CitasController::class,'store']);
 Route::get('/cita',[CitasController::class,'show']);
+Route::get('/cita/verificar',[CitasController::class,'verificarCita']);
 Route::get('/citas/{fecha}/horas-disponibles',[CitasController::class,'getHorasDisponibles']);

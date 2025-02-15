@@ -200,11 +200,11 @@ class CitasController extends Controller
         $citas = $query->with(['vehiculo', 'solicitante', 'estacion'])
             ->first();
         
-        if (!$citas) {
+        if ($citas==null) {
                 return response()->json([
                     'message' => 'Cita no encontrada.',
-                    'status' => 400
-                ], 400);
+                    'status' => 404
+                ], 404);
         }
 
         return response()->json([
@@ -302,5 +302,34 @@ class CitasController extends Controller
             'data' => $citas,
             'status' => 200,
         ]);
+    }
+
+    public function verificarCita(Request $request){
+
+        // Validar la entrada del usuario
+    $validator = Validator::make($request->query(), [ // Cambié a query() porque la petición es GET
+        'placa' => 'required|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'Error en la validación de los datos',
+            'errors' => $validator->errors(),
+            'status' => 400,
+        ], 400);
+    }
+
+    $placa = $request->query('placa');
+
+    // Buscar la cita asociada al vehículo con esa placa
+    $cita=Cita::where('id_vehiculo',$request->query('placa'))->first();  
+
+ 
+
+    return response()->json([
+        'cita' => $cita,
+        'status' => 200,
+    ]);
+
     }
 }
