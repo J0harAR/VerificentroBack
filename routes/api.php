@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\SolicitanteController;
 use App\Http\Controllers\Api\EstadoController;
 use App\Http\Controllers\Api\EstacionController;
 use App\Http\Controllers\Api\CitasController;
+use App\Http\Controllers\Api\Auth\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,8 +19,26 @@ use App\Http\Controllers\Api\CitasController;
 |
 */
 
+Route::group([
+    'prefix' => 'auth'
+], function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('signup', [AuthController::class, 'signUp']);
+  
+    Route::group([
+      'middleware' => 'auth:api'
+    ], function() {
+        Route::get('logout', [AuthController::class, 'logout']);
+        Route::get('user', [AuthController::class, 'user']);
+        
+    });
+});
+
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/vehiculos',[VehiculoController::class,'index']);
+});
 //Rutas para los vehiculos
-Route::get('/vehiculos',[VehiculoController::class,'index']);
 Route::post('/vehiculo',[VehiculoController::class,'store']);
 Route::get('/vehiculo/{placa}',[VehiculoController::class,'show']);
 Route::put('/vehiculo/{placa}',[VehiculoController::class,'update']);
