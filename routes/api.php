@@ -35,7 +35,7 @@ Route::group([
 });
 
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('client')->group(function () {
     Route::get('/vehiculos',[VehiculoController::class,'index']);
 });
 //Rutas para los vehiculos
