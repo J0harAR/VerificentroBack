@@ -36,38 +36,40 @@ Route::group([
 
 
 Route::middleware('client')->group(function () {
+    
+    //Rutas para los vehiculos
     Route::get('/vehiculos',[VehiculoController::class,'index']);
+    Route::post('/vehiculo',[VehiculoController::class,'store']);
+    Route::get('/vehiculo/{placa}',[VehiculoController::class,'show']);
+    Route::put('/vehiculo/{placa}',[VehiculoController::class,'update']);
+    Route::delete('/vehiculo/{placa}',[VehiculoController::class,'destroy']);
+    Route::get('/vehiculos/estado/{estado}',[VehiculoController::class,'filtrarPorEstado']);
+
+    //Rutas para solicitantes
+    Route::get('/solicitantes',[SolicitanteController::class,'index']);
+    Route::post('/solicitante',[SolicitanteController::class,'store']);
+    Route::get('/solicitante/{id_solicitante}',[SolicitanteController::class,'show']);
+    Route::put('/solicitante/{id_solicitante}',[SolicitanteController::class,'update']);
+    Route::delete('/solicitante/{id_solicitante}',[SolicitanteController::class,'destroy']);
+
+    //Rutas para filtrar los datos por municipio
+    Route::get('/estados',[EstadoController::class,'index']);
+    Route::get('/estados/{id_estado}/municipios',[EstadoController::class,'getMunicipios']);
+
+    //Rutas para estaciones
+
+    Route::get('/estaciones',[EstacionController::class,'index']);
+    Route::post('/estacion',[EstacionController::class,'store']);
+    Route::get('/estacion/{id_estacion}',[EstacionController::class,'show']);
+    Route::put('/estacion/{id_estacion}',[EstacionController::class,'update']);
+    Route::delete('/estacion/{id_estacion}',[EstacionController::class,'destroy']);
+
+    //Ruta para citas
+    Route::get('/citas',[CitasController::class,'index']);
+    Route::get('/citas/buscar',[CitasController::class,'filtrarCitas']);
+    Route::post('/cita',[CitasController::class,'store']);
+    Route::get('/cita',[CitasController::class,'show']);
+    Route::get('/cita/verificar',[CitasController::class,'verificarCita']);
+    Route::get('/citas/{fecha}/horas-disponibles',[CitasController::class,'getHorasDisponibles']);
 });
-//Rutas para los vehiculos
-Route::post('/vehiculo',[VehiculoController::class,'store']);
-Route::get('/vehiculo/{placa}',[VehiculoController::class,'show']);
-Route::put('/vehiculo/{placa}',[VehiculoController::class,'update']);
-Route::delete('/vehiculo/{placa}',[VehiculoController::class,'destroy']);
-Route::get('/vehiculos/estado/{estado}',[VehiculoController::class,'filtrarPorEstado']);
 
-//Rutas para solicitantes
-Route::get('/solicitantes',[SolicitanteController::class,'index']);
-Route::post('/solicitante',[SolicitanteController::class,'store']);
-Route::get('/solicitante/{id_solicitante}',[SolicitanteController::class,'show']);
-Route::put('/solicitante/{id_solicitante}',[SolicitanteController::class,'update']);
-Route::delete('/solicitante/{id_solicitante}',[SolicitanteController::class,'destroy']);
-
-//Rutas para filtrar los datos por municipio
-Route::get('/estados',[EstadoController::class,'index']);
-Route::get('/estados/{id_estado}/municipios',[EstadoController::class,'getMunicipios']);
-
-//Rutas para estaciones
-
-Route::get('/estaciones',[EstacionController::class,'index']);
-Route::post('/estacion',[EstacionController::class,'store']);
-Route::get('/estacion/{id_estacion}',[EstacionController::class,'show']);
-Route::put('/estacion/{id_estacion}',[EstacionController::class,'update']);
-Route::delete('/estacion/{id_estacion}',[EstacionController::class,'destroy']);
-
-//Ruta para citas
-Route::get('/citas',[CitasController::class,'index']);
-Route::get('/citas/buscar',[CitasController::class,'filtrarCitas']);
-Route::post('/cita',[CitasController::class,'store']);
-Route::get('/cita',[CitasController::class,'show']);
-Route::get('/cita/verificar',[CitasController::class,'verificarCita']);
-Route::get('/citas/{fecha}/horas-disponibles',[CitasController::class,'getHorasDisponibles']);
