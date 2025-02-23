@@ -30,6 +30,20 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="{{route('citas.index')}}">
+                        <i class='bx bx-calendar'></i>
+                        <span data-key="t-dashboard">@lang('translation.Date')</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{route('estaciones.index')}}">
+                    <i class='bx bx-buildings'></i>
+                        <span data-key="t-dashboard">@lang('translation.Building')</span>
+                    </a>
+                </li>
+
               
             
             </ul>

@@ -134,6 +134,7 @@ return [
     "Toast"=>"Toasts",
     "Users"=>"Usuarios",
     "Role"=>"Roles",
-
+    "Date"=>"Citas",
+    "Building"=>"Estaciones",
 ];
 ?>

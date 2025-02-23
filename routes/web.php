@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\CitasController;
-
+use App\Http\Controllers\EstacionesController;
 use App\Http\Controllers\ClientesController;
 /*
 |--------------------------------------------------------------------------
@@ -36,8 +36,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('/cita/{id}',[CitasController::class,'destroy'])->name('citas.destroy');
     Route::post('/cita/{id}/aviso',[CitasController::class,'sendMail'])->name('citas.aviso');
     Route::put('/cita/{id}/finalizar',[CitasController::class,'changeStatus'])->name('citas.finalizar');
-
+   
     Route::get('/clientes',[ClientesController::class,'index'])->name('clientes.index');
+
+    //Estaciones
+    Route::resource('estaciones', EstacionesController::class);
+    Route::get('/estados/{id_estado}/municipios',[EstacionesController::class,'getMunicipios']);
 });
 
 
