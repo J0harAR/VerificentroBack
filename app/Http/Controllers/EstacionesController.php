@@ -58,8 +58,8 @@ class EstacionesController extends Controller
             'colonia'=>$request->input('colonia'),
             'codigo_postal'=>$request->input('codigo_postal'),
             'localidad'=>$request->input('localidad'),
-            'municipio'=>$municipio,
-            'entidad_federativa'=>$estado,
+            'municipio'=>$municipio->description,
+            'entidad_federativa'=>$estado->description,
             'entre_calles'=>$request->input('entre_calles'),
         ]);
 
