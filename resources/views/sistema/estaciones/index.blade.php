@@ -12,55 +12,28 @@
 
 @endsection
 @section('content')
-@include('partials.alertas')
 @component('components.breadcrumb')
 @slot('li_1') Estaciones @endslot
 @slot('title') Lista de estaciones @endslot
 @endcomponent
 
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generarEstacionModal">
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#generarEstacionModal">
     <i class="fas fa-plus"></i>
     Nueva Estación
 </button>
 @include('sistema.estaciones.modals.create')
 
-
+@include('partials.alertas')
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-sm">
-                        
-                    </div>
-                    <div class="col-sm-auto">
-                        <div class="d-flex align-items-center gap-1 mb-4">
-                            <div class="input-group datepicker-range">
-                                <input type="text" class="form-control flatpickr-input" data-input aria-describedby="date1">
-                                <button class="input-group-text" id="date1" data-toggle><i class="bx bx-calendar-event"></i></button>
-                            </div>
-                            <div class="dropdown">
-                                <a class="btn btn-link text-muted py-1 font-size-16 shadow-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bx bx-dots-horizontal-rounded"></i>
-                                </a>
-
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#">Action</a></li>
-                                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- end row -->
-
                 <div class="table-responsive">
                     <table class="table align-middle datatable dt-responsive table-check nowrap" style="border-collapse: collapse; border-spacing: 0 8px; width: 100%;">
                         <thead>
                             <tr class="bg-transparent">
-                            
                                 <th>Nombre de la estacion</th>
+                                <th>Direccion</th>
                                 <th>Telefono</th>
                                 <th style="width: 90px;">Action</th>
                             </tr>
@@ -74,6 +47,7 @@
                                 <td>
                                     {{$estacion->nombre}}
                                 </td>
+                                <td>{{$estacion->direccion->calle}},{{$estacion->direccion->numero_exterior}},{{$estacion->direccion->colonia}},{{$estacion->direccion->codigo_postal}}</td>
                                 <td>{{$estacion->telefono}}</td>
                              
                                 <td>
@@ -83,29 +57,21 @@
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
 
-                                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#">
-                                                     Editar Cita
+                                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editarEstacionModal-{{ $estacion->id }}">
+                                                     Editar estacion
                                                 </button>
                                 
-                                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#">
-                                                    Finalizar cita
-                                                </button>
-                                                             
-                                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#">
-                                                    Eliminar cita
-                                                </button>
-                                                                                                                                                        
-                                                <form action="" method="POST">
-                                                        @csrf
-                                                        @method('POST')
-                                                        <button class="dropdown-item" type="submit">Avisar con correo</button>
-                                                </form>
-                                               
+                                                   
+                                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteEstacion-{{$estacion->id}}">
+                                                    Eliminar estacion
+                                                </button>                             
                                         </ul>
                                     </div>
                                 </td>
                                
                             </tr>
+                            @include('sistema.estaciones.modals.delete')
+                            @include('sistema.estaciones.modals.edit')
                        
                         @endforeach
                     
@@ -123,6 +89,49 @@
 </div>
 <!-- end row -->
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $(document).on('change', 'select[name="estado"]', function () {
+        var estadoId = $(this).val();
+        var modal = $(this).closest('.modal');
+        var municipioSelect = modal.find('select[name="municipio"]');
+        var municipioSeleccionado = municipioSelect.data('selected');
+
+        if (estadoId) {
+            $.ajax({
+                url: '/estados/' + estadoId + '/municipios',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    municipioSelect.empty();
+                    municipioSelect.append('<option value="" disabled>Selecciona un municipio</option>');
+
+                    $.each(response.municipios, function (key, municipio) {
+                        let selected = (municipio.description == municipioSeleccionado) ? 'selected' : '';
+                        municipioSelect.append('<option value="' + municipio.description + '" ' + selected + '>' + municipio.description + '</option>');
+                    });
+
+                    municipioSelect.val(municipioSeleccionado); // Selecciona el municipio correcto
+                },
+                error: function () {
+                    alert('Error al obtener los municipios');
+                }
+            });
+        }
+    });
+
+    $('.modal').on('shown.bs.modal', function () {
+        var municipioSelect = $(this).find('select[name="municipio"]');
+        if (municipioSelect.data('selected')) {
+            $(this).find('select[name="estado"]').trigger('change');
+        }
+    });
+});
+
+
+
+</script>
 
 @endsection
 

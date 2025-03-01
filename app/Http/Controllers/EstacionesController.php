@@ -94,17 +94,62 @@ class EstacionesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Estacion $estacion)
+    public function update(Request $request, $estacion)
     {
-        //
+      
+        $estacion = Estacion::find($estacion);
+
+        $validated = $request->validate([
+            'telefono'=>'required|size:10',
+            'latitude'=>'required',
+            'longitude'=>'required',
+            'calle'=>'required',   
+            'numero_exterior'=>'required',   
+            'numero_interior'=>'required',   
+            'colonia'=>'required',   
+            'codigo_postal'=>'required',          
+            'localidad'=>'required',   
+            'municipio'=>'required',   
+            'estado'=>'required',
+            'entre_calles'=>'required',  
+        ]);
+        $estado=Estados::find($request->input('estado'));
+
+        $direccion=$estacion->direccion;
+        $direccion->calle = $request->input('calle');
+        $direccion->numero_exterior = $request->input('numero_exterior');
+        $direccion->numero_interior = $request->input('numero_interior');
+        $direccion->colonia = $request->input('colonia');
+        $direccion->codigo_postal = $request->input('codigo_postal');
+        $direccion->localidad = $request->input('localidad');
+        $direccion->municipio = $request->input('municipio');
+        $direccion->entidad_federativa = $estado->description;
+        $direccion->entre_calles = $request->input('entre_calles');
+        $direccion->save();
+
+        $estacion->nombre = $request->input('nombre');
+        $estacion->telefono = $request->input('telefono');
+        $estacion->latitude = $request->input('latitude');
+        $estacion->longitude = $request->input('longitude');
+        $estacion->save();
+
+     
+        return redirect()->route('estaciones.index')->with('success', 'Estacion actualizada correctamente');
+    
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Estacion $estacion)
+    public function destroy($estacion)
     {
-        //
+        $estacion = Estacion::find($estacion);
+        
+        if(!$estacion){
+            return redirect()->route('estaciones.index')->with('error', 'No se encontro la estacion');          
+        }
+        $estacion->delete();
+        return redirect()->route('estaciones.index')->with('warning', 'Se elimino correctamente la estacion');
     }
 
     public function getMunicipios($id_estado){

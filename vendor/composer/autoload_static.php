@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit73db0865ab4ea683bfb9ebe124131bef
+class ComposerStaticInit5218e71ebe4909c477f0758e47540dd3
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -358,13 +358,13 @@ class ComposerStaticInit73db0865ab4ea683bfb9ebe124131bef
         ),
         'Spatie\\LaravelIgnition\\' => 
         array (
-            0 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/laravel-ignition',
-            1 => __DIR__ . '/..' . '/spatie/laravel-ignition/src',
+            0 => __DIR__ . '/..' . '/spatie/laravel-ignition/src',
+            1 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/laravel-ignition',
         ),
         'Spatie\\Ignition\\' => 
         array (
-            0 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/ignition',
-            1 => __DIR__ . '/..' . '/spatie/ignition/src',
+            0 => __DIR__ . '/..' . '/spatie/ignition/src',
+            1 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/ignition',
         ),
         'Spatie\\FlareClient\\' => 
         array (
@@ -449,8 +449,8 @@ class ComposerStaticInit73db0865ab4ea683bfb9ebe124131bef
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces',
-            1 => __DIR__ . '/..' . '/league/uri',
+            0 => __DIR__ . '/..' . '/league/uri',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces',
         ),
         'League\\OAuth2\\Server\\' => 
         array (
@@ -630,6 +630,7 @@ class ComposerStaticInit73db0865ab4ea683bfb9ebe124131bef
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Http\\Controllers\\Api\\Auth\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/Auth/AuthController.php',
         'App\\Http\\Controllers\\Api\\CitasController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/CitasController.php',
         'App\\Http\\Controllers\\Api\\EstacionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/EstacionController.php',
         'App\\Http\\Controllers\\Api\\EstadoController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/EstadoController.php',
@@ -642,11 +643,14 @@ class ComposerStaticInit73db0865ab4ea683bfb9ebe124131bef
         'App\\Http\\Controllers\\Auth\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ResetPasswordController.php',
         'App\\Http\\Controllers\\Auth\\VerificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/VerificationController.php',
         'App\\Http\\Controllers\\CitasController' => __DIR__ . '/../..' . '/app/Http/Controllers/CitasController.php',
+        'App\\Http\\Controllers\\ClientesController' => __DIR__ . '/../..' . '/app/Http/Controllers/ClientesController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\EstacionesController' => __DIR__ . '/../..' . '/app/Http/Controllers/EstacionesController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\RolController' => __DIR__ . '/../..' . '/app/Http/Controllers/RolController.php',
         'App\\Http\\Controllers\\UsuarioController' => __DIR__ . '/../..' . '/app/Http/Controllers/UsuarioController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
+        'App\\Http\\Middleware\\ApiAuthenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/ApiAuthenticate.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\EncryptCookies' => __DIR__ . '/../..' . '/app/Http/Middleware/EncryptCookies.php',
         'App\\Http\\Middleware\\Localization' => __DIR__ . '/../..' . '/app/Http/Middleware/Localization.php',
@@ -7494,9 +7498,9 @@ class ComposerStaticInit73db0865ab4ea683bfb9ebe124131bef
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit73db0865ab4ea683bfb9ebe124131bef::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit73db0865ab4ea683bfb9ebe124131bef::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit73db0865ab4ea683bfb9ebe124131bef::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5218e71ebe4909c477f0758e47540dd3::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5218e71ebe4909c477f0758e47540dd3::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit5218e71ebe4909c477f0758e47540dd3::$classMap;
 
         }, null, ClassLoader::class);
     }
