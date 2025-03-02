@@ -47,7 +47,8 @@ class EstacionesController extends Controller
             'entre_calles'=>'required', 
         ]);
 
-        $municipio=Municipios::find($request->input('municipio'));
+
+        $municipio=Municipios::where('description',$request->input('municipio'))->first();
         $estado=Estados::find($request->input('estado'));
 
         

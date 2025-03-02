@@ -38,20 +38,35 @@
                 placeholder="Dejar en blanco si no desea cambiar">
         </div>
 
-        <div class="mb-3">
-    <label class="form-label fw-semibold">Roles</label>
-    <div class="d-flex flex-wrap">
-        @foreach($roles as $roleId => $roleName)
-            <div class="form-check me-3"> <!-- Utiliza 'me-3' para margen derecho -->
-                <input class="form-check-input" type="checkbox" name="roles[]" value="{{ $roleName }}" id="role-{{ $usuario->id }}-{{ $roleId }}"
-                    {{ in_array($roleId, old('roles', $usuario->roles->pluck('id')->toArray())) ? 'checked' : '' }}>
-                <label class="form-check-label" for="role-{{ $usuario->id }}-{{ $roleId }}">
-                    {{ $roleName }}
-                </label>
-            </div>
-        @endforeach
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Roles</label>
+        <div class="d-flex flex-wrap">
+            @foreach($roles as $roleId => $roleName)
+                <div class="form-check me-3"> <!-- Utiliza 'me-3' para margen derecho -->
+                    <input class="form-check-input" type="checkbox" name="roles[]" value="{{ $roleName }}" id="role-{{ $usuario->id }}-{{ $roleId }}"
+                        {{ in_array($roleId, old('roles', $usuario->roles->pluck('id')->toArray())) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="role-{{ $usuario->id }}-{{ $roleId }}">
+                        {{ $roleName }}
+                    </label>
+                </div>
+            @endforeach
+        </div>  
     </div>
-</div>
+
+    <div class="col-12 mb-3">
+            <div class="form-group">
+                <label for="confirm-password">Estacion</label>
+                    <select name="id_estacion" id="id_estacion" class="form-control">
+                        <option value="" disabled selected>Seleccione una estacion</option>
+                        @foreach ($estaciones as $estacion)
+                            <option value="{{$estacion->id}}" 
+                                {{ isset($usuario->estacion) && $usuario->estacion->id == $estacion->id ? 'selected' : '' }}>
+                                {{$estacion->nombre}}
+                            </option>
+                        @endforeach
+                    </select>
+            </div>
+        </div>
 
     </div>
 
