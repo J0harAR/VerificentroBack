@@ -73,6 +73,18 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-12 mb-3">
+            <div class="form-group">
+                <label for="confirm-password">Estacion</label>
+                    <select name="id_estacion" id="id_estacion" class="form-control">
+                        <option value="" disabled selected>Seleccione una estacion</option>
+                        @foreach ($estaciones as $estacion)
+                                <option value="{{$estacion->id}}">{{$estacion->nombre}}</option>
+                        @endforeach
+                    </select>
+            </div>
+        </div>
     </div>
     
     <div class="d-flex justify-content-end mt-4">

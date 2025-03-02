@@ -16,8 +16,15 @@ class CitasController extends Controller
    
         public function index() {
             $user=Auth::user();
-            $citas = Cita::paginate(5);
-            return view('sistema.citas.index',compact('citas'));
+            if($user->hasRole('Administrador')){
+                $citas = Cita::paginate(5);
+                $estacion=null;
+                return view('sistema.citas.index',compact('citas','estacion'));
+            };
+            $estacion = $user->estacion;
+            $citas = Cita::where('id_estacion',$estacion->id)->paginate(5);
+            
+            return view('sistema.citas.index',compact('citas','estacion'));
         }
 
         public function store(){

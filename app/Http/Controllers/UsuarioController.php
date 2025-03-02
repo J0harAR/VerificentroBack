@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
+use App\Models\Estacion;
 use App\Services\UserService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -25,8 +26,9 @@ class UsuarioController extends Controller
     public function index()
     {
         $roles = Role::pluck('name', 'id')->all(); // Cambiar 'name' por 'id'
+        $estaciones=Estacion::all();
         $usuarios = User::paginate(5);
-        return view('sistema.usuarios.index', compact('usuarios', 'roles'));
+        return view('sistema.usuarios.index', compact('usuarios', 'roles','estaciones'));
     }
 
 

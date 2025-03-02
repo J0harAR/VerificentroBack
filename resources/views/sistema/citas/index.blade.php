@@ -22,6 +22,12 @@
 
 @include('partials.alertas')
 
+    @if($estacion)
+    <p class="text-primary">
+        Estacion:{{$estacion->nombre}}
+    </p>
+    @endif
+
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
