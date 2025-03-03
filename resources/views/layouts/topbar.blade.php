@@ -67,7 +67,9 @@
                     id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
                     <i data-feather="bell" class="icon-lg"></i>
-                    <span class="badge bg-danger rounded-pill">5</span>
+                    @if(Auth::user()->unreadNotifications->count())
+                        <span class="badge bg-danger rounded-pill">{{ Auth::user()->unreadNotifications->count() }}</span>
+                    @endif
                 </button>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                     aria-labelledby="page-header-notifications-dropdown">
@@ -81,75 +83,25 @@
                             </div>
                         </div>
                     </div>
+                    @foreach(auth()->user()->unreadNotifications as $notificacion)
                     <div data-simplebar style="max-height: 230px;">
                         <a href="#!" class="text-reset notification-item">
                             <div class="d-flex">
-                                <div class="flex-shrink-0 me-3">
-                                    <img src="build/images/users/avatar-3.jpg" class="rounded-circle avatar-sm"
-                                        alt="user-pic">
-                                </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="mb-1">James Lemire</h6>
+                                    <h6 class="mb-1">{{$notificacion->data['titulo']}}</h6>
                                     <div class="font-size-13 text-muted">
-                                        <p class="mb-1">It will seem like simplified English.</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>1 hours
-                                                ago</span></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="#!" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0 avatar-sm me-3">
-                                    <span class="avatar-title bg-primary rounded-circle font-size-16">
-                                        <i class="bx bx-cart"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Your order is placed</h6>
-                                    <div class="font-size-13 text-muted">
-                                        <p class="mb-1">If several languages coalesce the grammar</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>3 min
-                                                ago</span></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="#!" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0 avatar-sm me-3">
-                                    <span class="avatar-title bg-success rounded-circle font-size-16">
-                                        <i class="bx bx-badge-check"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Your item is shipped</h6>
-                                    <div class="font-size-13 text-muted">
-                                        <p class="mb-1">If several languages coalesce the grammar</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>2 min
-                                                ago</span></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <a href="#!" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0 me-3">
-                                    <img src="build/images/users/avatar-6.jpg" class="rounded-circle avatar-sm"
-                                        alt="user-pic">
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Salena Layfield</h6>
-                                    <div class="font-size-13 text-muted">
-                                        <p class="mb-1">As a skeptical Cambridge friend of mine occidental.</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>1 min
-                                                ago</span></p>
+                                        <p class="mb-1">Folio:{{$notificacion->data['folio']}}</p>
+                                        <p class="mb-1">Fecha:{{$notificacion->data['fecha']}}</p>
+                                        <p class="mb-1">Hora:{{$notificacion->data['hora']}}</p>
+                                        
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>{{ $notificacion->created_at->diffForHumans() }}</span></p>
                                     </div>
                                 </div>
                             </div>
                         </a>
                     </div>
+                    @endforeach
+
                     <div class="p-2 border-top d-grid">
                         <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
                             <i class="mdi mdi-arrow-right-circle me-1"></i> <span>View More..</span>
