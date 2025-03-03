@@ -11,6 +11,9 @@ use App\Models\Vehiculo;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CitasMail;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\Citas;
+use App\Models\User;
 
 class CitasController extends Controller
 {
@@ -37,19 +40,9 @@ class CitasController extends Controller
 
         $validator = Validator::make($request->all(), [
             'curp' => 'required',
-            'nombre' => 'required',
-            'apellido_p' => 'required',
-            'apellido_m' => 'required',
-            'celular' => 'required|size:10',
             'correo' => 'required|email',
-            'regimen' => 'required',
             'placa' => 'required',
-            'vin' => 'required',
-            'modelo' => 'required',
-            'marca' => 'required',
-            'año' => 'required',
             'estado' => 'required',
-            'tipo_combustible' => 'required',
             'tipo_cita' => 'required',
             'fecha' => 'required|date_format:Y-m-d',
             'hora' => 'required|date_format:H:i',
@@ -170,6 +163,9 @@ class CitasController extends Controller
         $cita->solicitante;
         $cita->estacion;
         Mail::to($request->correo)->send(new CitasMail());
+
+        $users=User::all();
+        Notification::send($users, new Citas($cita));
 
         return response()->json($data, 201);
     }
