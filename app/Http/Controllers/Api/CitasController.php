@@ -61,54 +61,6 @@ class CitasController extends Controller
         $solicitante = Solicitante::find($request->curp);
         $vehiculo = Vehiculo::find($request->placa);
         $estacion = Estacion::find($request->id_estacion);
-/*
-        //Primer caso es nuevo el registro es decir su primera vez
-        if (!$solicitante && !$vehiculo) {
-
-            $solicitante = Solicitante::create([
-                'curp' => $request->curp,
-                'nombre' => $request->nombre,
-                'apellido_p' => $request->apellido_p,
-                'apellido_m' => $request->apellido_m,
-                'celular' => $request->celular,
-                'correo' => $request->correo,
-                'regimen' => $request->regimen,
-            ]);
-
-            $vehiculo = Vehiculo::create([
-                'placa' => $request->placa,
-                'vin' => $request->vin,
-                'modelo' => $request->modelo,
-                'marca' => $request->marca,
-                'año' => $request->año,
-                'estado' => $request->estado,
-                'tipo_combustible' => $request->tipo_combustible,
-                'id_solicitante' => $solicitante->curp,
-            ]);
-
-            $cita = Cita::create([
-                'folio' => $folio = $estacion->nombre . '-' . $request->fecha . '-' . uniqid(),
-                'estado' => false,
-                'hora' => $request->hora,
-                'fecha' => $request->fecha,
-                'tipo' => $request->tipo_cita,
-                'id_solicitante' => $solicitante->curp,
-                'id_estacion' => $estacion->id,
-                'id_vehiculo' => $vehiculo->placa
-
-            ]);
-            $cita->solicitante;
-            $cita->estacion->direccion;
-
-            $data = [
-                'cita' => $cita,
-                'status' => 201,
-            ];
-
-            return response()->json($data, 201);
-        }
-
-        */
 
         // Verificar que el vehículo pertenece al solicitante
         $vehiculo_pertenece_solicitante = Vehiculo::where('placa', $vehiculo->placa)
@@ -163,8 +115,9 @@ class CitasController extends Controller
         $cita->solicitante;
         $cita->estacion;
         Mail::to($request->correo)->send(new CitasMail());
-
-        $users=User::all();
+       
+        
+        $users = $estacion->users; 
         Notification::send($users, new Citas($cita));
 
         return response()->json($data, 201);
