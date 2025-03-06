@@ -40,13 +40,22 @@ class CitasController extends Controller
 
         $validator = Validator::make($request->all(), [
             'curp' => 'required',
+            'nombre' => 'required',
+            'apellido_p' => 'required',
+            'apellido_m' => 'required',
+            'celular' => 'required|size:10',
             'correo' => 'required|email',
+            'regimen' => 'required',
             'placa' => 'required',
+            'vin' => 'required',
+            'modelo' => 'required',
+            'marca' => 'required',
+            'año' => 'required',
             'estado' => 'required',
+            'tipo_combustible' => 'required',
             'tipo_cita' => 'required',
             'fecha' => 'required|date_format:Y-m-d',
             'hora' => 'required|date_format:H:i',
-            'id_estacion' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -58,36 +67,6 @@ class CitasController extends Controller
             return response()->json($data, 400);
         }
 
-        $solicitante = Solicitante::find($request->curp);
-        $vehiculo = Vehiculo::find($request->placa);
-        $estacion = Estacion::find($request->id_estacion);
-
-        // Verificar que el vehículo pertenece al solicitante
-        $vehiculo_pertenece_solicitante = Vehiculo::where('placa', $vehiculo->placa)
-            ->where('id_solicitante', $solicitante->curp)
-            ->first();
-
-        if (!$vehiculo_pertenece_solicitante) {
-            return response()->json([
-                'message' => 'El vehículo no pertenece al solicitante.',
-                'status' => 400
-            ], 400);
-        }
-
-
-        $cita_repetida = Cita::where('id_solicitante', $solicitante->curp)
-            ->where('id_vehiculo', $vehiculo_pertenece_solicitante->placa)
-            ->where('estado', false)
-            ->where('fecha', $request->fecha)
-            ->where('hora', $request->hora)
-            ->first();
-
-        if ($cita_repetida) {
-            return response()->json([
-                'message' => 'Cita ya registrada.',
-                'status' => 400
-            ], 400);
-        }
 
         if (Cita::where('fecha', $request->fecha)->where('hora', $request->hora)->where('estado', false)->first()) {
             return response()->json([
@@ -95,6 +74,48 @@ class CitasController extends Controller
                 'status' => 400
             ], 400);
         }
+
+        $estacion = Estacion::find($request->id_estacion);
+        if (!$estacion) {
+            return response()->json(['message' => 'Estación no encontrada', 'status' => 404], 404);
+        }
+
+        $solicitante = Solicitante::firstOrCreate(['curp' => $request->curp], [
+            'nombre' => $request->nombre,
+            'apellido_p' => $request->apellido_p,
+            'apellido_m' => $request->apellido_m,
+            'celular' => $request->celular,
+            'correo' => $request->correo,
+            'regimen' => $request->regimen,
+        ]);
+
+        $vehiculo = Vehiculo::firstOrCreate(['placa' => $request->placa], [
+            'vin' => $request->vin,
+            'modelo' => $request->modelo,
+            'marca' => $request->marca,
+            'año' => $request->año,
+            'estado' => $request->estado,
+            'tipo_combustible' => $request->tipo_combustible,
+            'id_solicitante' => $solicitante->curp,
+        ]);
+      
+        $citaExistente = Cita::where('id_solicitante', $solicitante->curp)
+        ->where('id_vehiculo', $vehiculo->placa)
+        ->where('fecha', $request->fecha)
+        ->where('hora', $request->hora)
+        ->where('estado', false)
+        ->exists();
+
+        if ($citaExistente) {
+            return response()->json(['message' => 'Cita ya registrada.', 'status' => 400], 400);
+        }
+
+        $cita_date_diferentes=Cita::where('id_solicitante',$solicitante->curp)->where('id_vehiculo', $vehiculo->placa)->where('estado', false)->exists();
+        
+        if($cita_date_diferentes){
+            return response()->json(['message' => 'Cita ya registrada.', 'status' => 400], 400);
+        }
+
 
         $cita = Cita::create([
             'folio' => $folio = $estacion->nombre . '-' . $request->fecha . '-' . uniqid(),
@@ -114,12 +135,10 @@ class CitasController extends Controller
         $cita->vehiculo;
         $cita->solicitante;
         $cita->estacion;
+
         Mail::to($request->correo)->send(new CitasMail());
-       
-        
         $users = $estacion->users; 
         Notification::send($users, new Citas($cita));
-
         return response()->json($data, 201);
     }
 
