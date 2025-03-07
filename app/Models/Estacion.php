@@ -27,4 +27,9 @@ class Estacion extends Model
         return $this->hasMany(User::class, 'id_estacion');
     }
 
+    public function horarios()
+    {
+        return $this->belongsToMany(Horario::class, 'horario_estacion', 'id_estacion', 'id_horario');
+    }
+
 }
