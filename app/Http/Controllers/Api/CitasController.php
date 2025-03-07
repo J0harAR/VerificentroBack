@@ -14,7 +14,9 @@ use App\Mail\CitasMail;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\Citas;
 use App\Models\User;
-
+use App\Models\Horario;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 class CitasController extends Controller
 {
     public function index()
@@ -186,14 +188,23 @@ class CitasController extends Controller
 
     public function getHorasDisponibles($fecha, Request $request)
     {
+        Carbon::setLocale('es');
         $centerId = $request->query('centerId'); // Get the center ID from the query string
-
-        $horaInicio = '08:00:00';
-        $horaFin = '18:00:00';
-
-        // Generate all time slots in 15-minute intervals
-        $todasLasHoras = $this->generarIntervalosDeTiempo($horaInicio, $horaFin, 15);
-
+        $nombreDia = Carbon::parse($fecha)->translatedFormat('l');
+        $horarios=Estacion::find($centerId)->horarios;
+        
+        $horaInicio = '';
+        $horaFin = '';
+        $todasLasHoras =[];
+        foreach($horarios as $horario){
+            if(Str::lower($horario->dia->dia) == $nombreDia){
+                $horaInicio=$horario->hora_inicio;
+                $horaFin=$horario->hora_fin;
+                // Generate all time slots in 15-minute intervals
+                $todasLasHoras = $this->generarIntervalosDeTiempo($horaInicio, $horaFin, 15);
+                
+            }
+        }
         // Obtener la hora actual si la fecha es hoy
         $horaActual = now()->format('H:i:s');
         if ($fecha == now()->format('Y-m-d')) {
