@@ -7,6 +7,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\CitasController;
 use App\Http\Controllers\EstacionesController;
 use App\Http\Controllers\ClientesController;
+use App\Http\Controllers\HorariosController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,6 +43,9 @@ Route::group(['middleware' => ['auth']], function () {
     //Estaciones
     Route::resource('estaciones', EstacionesController::class);
     Route::get('/estados/{id_estado}/municipios',[EstacionesController::class,'getMunicipios']);
+
+    Route::get('/horarios',[HorariosController::class,'index'])->name('horarios.index');
+    Route::post('/horario',[HorariosController::class,'store'])->name('horarios.store');
 });
 
 

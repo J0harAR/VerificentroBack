@@ -136,5 +136,6 @@ return [
     "Role"=>"Roles",
     "Date"=>"Citas",
     "Building"=>"Estaciones",
+    "schedule"=>"Horario",
 ];
 ?>
