@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Invoice_List') @endsection
+@section('title') @lang('translation.Date') @endsection
 
 @section('css')
 
@@ -21,6 +21,12 @@
 @endcomponent
 
 @include('partials.alertas')
+
+    @if($estacion)
+    <p class="text-primary">
+        Estacion:{{$estacion->nombre}}
+    </p>
+    @endif
 
 <div class="row">
     <div class="col-lg-12">

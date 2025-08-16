@@ -30,6 +30,7 @@
                                 <th scope="col">Nombre</th>
                                 <th scope="col">E-mail</th>
                                 <th scope="col">Rol</th>
+                                <th>Estacion</th>
                                 <th scope="col" class="text-center">Acciones</th>
                             </tr>
                         </thead>
@@ -47,6 +48,14 @@
                                         @else
                                             <span class="text-muted">Sin rol asignado</span>
                                         @endif
+                                    </td>
+                                    <td>
+                                        @if ($usuario->estacion)
+                                            {{$usuario->estacion->nombre}}
+                                        @else
+                                            <span class="text-muted">Sin estacion asignado</span>
+                                        @endif
+                                   
                                     </td>
                                     <td class="text-center align-middle">
                                         @can('gestionar-usuarios-editar')

@@ -3,16 +3,19 @@
 namespace Spatie\ErrorSolutions\Solutions;
 
 use Spatie\ErrorSolutions\Contracts\Solution;
+use Spatie\ErrorSolutions\Solutions\Concerns\IsProvidedByFlare;
 
 class SuggestCorrectVariableNameSolution implements Solution
 {
+    use IsProvidedByFlare;
+
     protected ?string $variableName;
 
     protected ?string $viewFile;
 
     protected ?string $suggested;
 
-    public function __construct(string $variableName = null, string $viewFile = null, string $suggested = null)
+    public function __construct(?string $variableName = null, ?string $viewFile = null, ?string $suggested = null)
     {
         $this->variableName = $variableName;
 
